@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ajax</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <br>
+      <h1 class='text-center'>Find GitHub Profiles</h1>
+      <form id='userInputForm'>
+        <div class="form-inline">
+          <label>Which GitHub user would you like to see: &nbsp</label>
+            <input type="text" class="form-control" placeholder="username" id='input'>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="submit">Find</button>
+            </div>
+            <br>
+        </div>
+      </form>
+      <br>
+
+      <div id='myDiv'></div>
+    </div>
+
+    <script>
+      function getGithubUser(e){
+        e.preventDefault();
+
+        var username = document.getElementById('input').value;
+        if(!username || username==''){
+          username = 'sukhvirs';
+        }
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(){
+          if(xhttp.status == 200 && xhttp.readyState == 4){
+            var result = JSON.parse(xhttp.response);
+
+            document.getElementById('myDiv').innerHTML = `
+              <div class="card" style="width: 18rem;">
+                <img src=${result.avatar_url} class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">${result.name}</h5>
+                  <p class="card-text">
+                    Bio: ${result.bio}
+                    <br>
+                    Public Repos: +${result.public_repos}
+                  </p>
+                  <a href=${result.html_url} class="btn btn-primary" target="=_blank">GitHub Page</a>
+                </div>
+              </div>
+            `
+          }
+        }
+        xhttp.open('GET', 'https://api.github.com/users/' + username);
+        xhttp.send();
+      }
+
+      document.getElementById('userInputForm').addEventListener('submit', getGithubUser, false);
+    </script>
+  </body>
+</html>
